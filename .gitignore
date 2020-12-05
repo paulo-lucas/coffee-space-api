@@ -1,6 +1,9 @@
 node_modules/
-logs/
+logs/*
+!logs
 !logs/.gitkeep
 .env
-!src/config/.gitkeep
 src/config/*
+!src/config
+!src/config/.gitkeep
+
