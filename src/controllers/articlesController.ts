@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import dbquery from '../db/queryHandler';
-import { authWriter } from '../middlewares/authentication';
+import { authWriter, authAdmin } from '../middlewares/authentication';
 
 const articlesRouter = Router();
 
@@ -18,14 +18,26 @@ articlesRouter.get('/:id', async (req: Request, res: Response) => {
   if (dbresponse.err || !dbresponse.result.length)
     return res.status(404).json({ error: "Article does not exist" });
 
-  res.status(200).json(dbresponse.result);
+  res.status(200).json(dbresponse.result[0]);
 
   dbquery(updateQuery);
 });
 
+articlesRouter.get('/', authWriter, authAdmin, async (req: Request, res: Response) => {
+  const { writerId, writerIsAdmin } = req.body;
+  const query = `SELECT * FROM articles WHERE 1 = 1 ${writerIsAdmin ? "" : "AND id_writer = " + writerId}`;
+
+  const dbresponse = await dbquery(query);
+
+  if (dbresponse.err || !dbresponse.result.length)
+    return res.status(404).json({ error: "Writer do not have articles yet" });
+
+  res.status(200).json(dbresponse.result);
+});
+
 articlesRouter.post('/new', authWriter, async (req: Request, res: Response) => {
   const { title, content, banner, writerId } = req.body;
-  
+
   if (!writerId || !title || !content)
     return res.status(400).json({ error: "Missing information " });
 
@@ -69,7 +81,7 @@ articlesRouter.put('/:articleId', authWriter, async (req: Request, res: Response
 articlesRouter.delete('/:articleId', authWriter, async (req: Request, res: Response) => {
   const { articleId } = req.params;
   const { writerId } = req.body;
-  
+
   if (!articleId || !writerId)
     return res.status(400).json({ error: "Missing information" });
 
