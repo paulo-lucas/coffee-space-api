@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import jwt from   'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dbquery from '../db/queryHandler';
 import { authWriter } from '../middlewares/authentication';
@@ -9,7 +9,7 @@ const writersController = Router();
 
 function generateToken(params: Object) {
   return jwt.sign(params, authConfig.secret, {
-      expiresIn: 259200
+    expiresIn: 259200
   });
 }
 
@@ -18,7 +18,7 @@ writersController.post("/auth", async (req: Request, res: Response) => {
 
   const selectQuery = `SELECT id_writer, writer_name ,writer_password FROM writers WHERE writer_email = '${email}'`;
   const selectDBResponse = await dbquery(selectQuery);
-console.log(selectDBResponse)
+
   if (!selectDBResponse.result.length)
     return res.status(400).json({ error: "Writer not found" });
 
@@ -43,12 +43,57 @@ writersController.get("/token", authWriter, (req: Request, res: Response) => {
   });
 });
 
-writersController.get("/index", (req: Request, res: Response) => {
+writersController.get("/", async(req: Request, res: Response) => {
+  const query = `
+    SELECT
+      id_writer,
+      writer_name,
+      writer_avatar,
+      writer_email,
+      writer_linkedin,
+      writer_github,
+      writer_twitter,
+      writer_bio,
+      writer_title,
+      writer_website
+    FROM writers`;
 
+    const dbresponse = await dbquery(query);
+
+  if (dbresponse.err || !dbresponse.result.length)
+    return res.status(404).json({ error: "No writers where found" });
+
+  res.status(200).json(dbresponse.result);
 });
 
-writersController.get("/:id", (req: Request, res: Response) => {
+writersController.get("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
 
+  const query = `
+      SELECT
+        id_writer,
+        writer_name,
+        writer_avatar,
+        writer_email,
+        writer_linkedin,
+        writer_github,
+        writer_twitter,
+        writer_bio,
+        writer_title,
+        writer_website
+      FROM writers
+      WHERE
+        ${Number(id)
+          ? `id_writer = ${id}`
+          : `UPPER(writer_name) = UPPER('${id.replace(/-/g, ' ')}')`
+        }`;
+
+  const dbresponse = await dbquery(query);
+
+  if (dbresponse.err || !dbresponse.result.length)
+    return res.status(404).json({ error: "Writer does not exist" });
+
+  res.status(200).json(dbresponse.result[0]);
 });
 
 export default writersController;
