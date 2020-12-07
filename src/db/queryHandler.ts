@@ -4,8 +4,8 @@ import logger from '../services/logger';
 
 interface DBResponse {
   err: MysqlError | null;
-  result: Array<Object>;
-  field: Array<FieldInfo> | undefined;
+  result: Array<any>;
+  field?: Array<FieldInfo>;
 }
 
 const dbquery = async (query: string): Promise<DBResponse> => {
