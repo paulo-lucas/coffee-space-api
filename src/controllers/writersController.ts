@@ -43,7 +43,7 @@ writersController.get("/token", authWriter, (req: Request, res: Response) => {
   });
 });
 
-writersController.get("/", async(req: Request, res: Response) => {
+writersController.get("/", async (req: Request, res: Response) => {
   const query = `
     SELECT
       id_writer,
@@ -58,7 +58,7 @@ writersController.get("/", async(req: Request, res: Response) => {
       writer_website
     FROM writers`;
 
-    const dbresponse = await dbquery(query);
+  const dbresponse = await dbquery(query);
 
   if (dbresponse.err || !dbresponse.result.length)
     return res.status(404).json({ error: "No writers where found" });
@@ -84,9 +84,9 @@ writersController.get("/:id", async (req: Request, res: Response) => {
       FROM writers
       WHERE
         ${Number(id)
-          ? `id_writer = ${id}`
-          : `UPPER(writer_name) = UPPER('${id.replace(/-/g, ' ')}')`
-        }`;
+      ? `id_writer = ${id}`
+      : `UPPER(writer_name) = UPPER('${id.replace(/-/g, ' ')}')`
+    }`;
 
   const dbresponse = await dbquery(query);
 
@@ -94,6 +94,26 @@ writersController.get("/:id", async (req: Request, res: Response) => {
     return res.status(404).json({ error: "Writer does not exist" });
 
   res.status(200).json(dbresponse.result[0]);
+});
+
+writersController.put("/change_info", authWriter, async (req: Request, res: Response) => {
+  const {
+    writerId,
+    name,
+    avatar,
+    email,
+    linkedin,
+    github,
+    twitter,
+    bio,
+    title,
+    website,
+    newPassword,
+    confirmPassword,
+    currentPassword
+  } = req.body;
+
+  
 });
 
 export default writersController;
