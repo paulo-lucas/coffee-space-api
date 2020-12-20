@@ -4,7 +4,7 @@ import router from './routes';
 import logger from './services/logger';
 
 const app = express();
-const port = process.env.PORT || 3333;
+const port = process.env.PORT || 21032;
 
 app.use(express.json());
 app.use(cors());

@@ -8,7 +8,7 @@ con.connect(function (err) {
   if (err)
     return logger.error(String(err));
 
-  logger.info(`Connected to database on localhost:3306, user 'root'.`);
+  logger.info(`Connected to database on ${dbConfig.host}, user ${dbConfig.user}.`);
 });
 
 export default con;
