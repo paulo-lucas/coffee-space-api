@@ -1,10 +1,13 @@
 node_modules/
 build/
-logs/*
-!logs
-!logs/.gitkeep
 .env
+
+src/logs/*
+!src/logs
+!src/logs/.gitkeep
+
 src/config/*
 !src/config
 !src/config/.gitkeep
+!src/config/*.example.json
 

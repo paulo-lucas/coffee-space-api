@@ -1,15 +1,16 @@
 import { Router, Request, Response } from 'express';
 
-import adminController from './controllers/adminController';
-import writersController from './controllers/writersController';
-import articlesController from './controllers/articlesController';
+import routeTrack from './middlewares/route-track';
+
+import adminController from './controllers/admin-controller';
+import postsController from './controllers/posts-controller';
 
 const router = Router();
 
+router.use(routeTrack);
 router.use('/admin', adminController);
-router.use('/writer', writersController);
-router.use('/article', articlesController);
+router.use('/posts', postsController);
 
-router.get('/', (req: Request, res: Response) => res.status(200).send("Api Coffee Space está online."));
+router.get('/', (req: Request, res: Response) => res.status(200).send('Api Coffee Space está online.'));
 
 export default router;

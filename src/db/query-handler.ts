@@ -1,6 +1,8 @@
 import con from './connection';
 import { MysqlError, FieldInfo } from 'mysql';
-import logger from '../services/logger';
+import logger from '../utils/logger';
+
+const dbLog = logger("database");
 
 interface DBResponse {
   err: MysqlError | null;
@@ -14,7 +16,7 @@ const dbquery = async (query: string): Promise<DBResponse> => {
     con.query(query, async (err, result, field) => {
 
       if (err) {
-        logger.error(String(err));
+        dbLog.error(String(err));
       }
 
       resolve({
